@@ -1,20 +1,20 @@
 import React from 'react';
-import { AppRegistry, View, StatusBar, Navigator } from 'react-native';
+import { Navigator, BackAndroid } from 'react-native';
 
-import LoginView from './components/login/LoginView';
-
-import RepositoriesView from './components/repositories/RepositoriesView';
-import RepositoryView from './components/repositories/RepositoryView';
-
-
-import testData from '../test/data.json';
+import RepositoriesView from './components/RepositoriesView';
+import RepositoryView from './components/RepositoryView';
 
 
 export default class App extends React.Component {
+	componentDidMount() {
+		this.registerBackButton();
+	}
+
 	render() {
 		return (
 			<Navigator
-				initialRoute={{ path: '/repository', repository: testData.items[0] }}
+				ref={(ref) => this.navigator = ref}
+				initialRoute={{ path: '/repositories' }}
 				renderScene={this.renderScene}
 			/>
 		);
@@ -22,14 +22,22 @@ export default class App extends React.Component {
 
 	renderScene = (route, navigator) => {
 		switch (route.path) {
-			case '/login':
-				return <LoginView navigator={navigator} />
 			case '/repositories':
-				return <RepositoriesView navigator={navigator} />
+				return <RepositoriesView navigator={navigator} />;
 			case '/repository':
-				return <RepositoryView navigator={navigator} repository={route.repository} />
+				return <RepositoryView navigator={navigator} repository={route.repository} />;
 			default:
 				throw 'route not found'
 		}
+	};
+
+
+	registerBackButton = () => {
+		BackAndroid.addEventListener('hardwareBackPress', this.onBackButton);
+	};
+
+	onBackButton = () => {
+		this.navigator.pop();
+		return this.navigator.getCurrentRoutes().length > 1 ? true : false;
 	};
 }

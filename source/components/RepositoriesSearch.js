@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Text, TextInput, View, StyleSheet } from 'react-native';
 
-import Theme from '../../theme';
+import Theme from '../theme/index';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -12,14 +12,24 @@ export default class RepositoriesSearch extends React.Component {
 
         this.state = {
             mode: 'icon',
-            value: ''
+            value: props.value
         };
     }
+
+	componentWillReceiveProps(props) {
+		if (this.state.value !== props.value) {
+			this.setState({value: props.value});
+
+			if (!this.state.value) {
+				this.switchModeTo('icon');
+			}
+		}
+	}
 
     render() {
         return (
             <View style={this.isMode('full') ? styles.searchViewFull : styles.searchView}>
-                <Icon style={styles.seachIcon} name="search" size={30} onPress={() => this.switchModeTo('full')} />
+                <Icon style={styles.searchIcon} name="search" size={30} onPress={() => this.switchModeTo('full')} />
                 {this.isMode('full') && (
                     <TextInput
                         autoFocus={true}
@@ -41,15 +51,18 @@ export default class RepositoriesSearch extends React.Component {
     switchModeTo = (mode) => !this.isMode(mode) && (this.setState({ mode }));
 
     onDone = () => {
-        if (this.state.value) {
-            return;
+        if (!this.state.value) {
+			this.switchModeTo('icon');
         }
-        this.switchModeTo('icon');
+
+        if (this.props.onSearch) {
+			this.props.onSearch(this.state.value);
+		}
     };
 }
 
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
     searchView: {
         position: 'absolute',
         top: 10,
@@ -78,7 +91,7 @@ var styles = StyleSheet.create({
         shadowColor: '#000'
     },
 
-    seachIcon: {
+    searchIcon: {
         color: 'rgba(255, 255, 255, 0.7)',
         textShadowRadius: 10,
         textShadowOffset: { width: 1, height: 1 },

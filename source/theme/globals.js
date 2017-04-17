@@ -5,5 +5,11 @@ const richLevenderColor = '#A663CC';
 
 export default {
     mainColor: grapeColor,
-    mainBackgroundColor: lavenderMistColor
+    mainBackgroundColor: lavenderMistColor,
+
+	icons: {
+    	star: {
+			color: '#ff0'
+		}
+	}
 };
