@@ -5,8 +5,6 @@ import React from 'react';
 import {View, ListView, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Theme from '../theme/index';
-
 export default class PullRequestsList extends React.Component {
 
 	render() {

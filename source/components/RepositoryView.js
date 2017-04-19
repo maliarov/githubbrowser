@@ -6,16 +6,20 @@ import Hyperlink from 'react-native-hyperlink';
 import PullRequestsList from './PullRequestsList';
 import Counter from './Counter';
 
-import Theme from '../theme/index';
+import Theme from '../theme';
 
-import GitHub from '../models/GitHub';
+import {connect} from 'react-redux';
 
+//import GitHub from '../models/GitHub';
 
+@connect(state => ({state: state.repositories}), (dispatch) => ({dispatch}))
 export default class RepositoriesView extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.pullRequestsDataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+		/*
+		 this.pullRequestsDataSource = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+		*/
 
 		this.state = {
 			pullRequests: null
@@ -23,6 +27,7 @@ export default class RepositoriesView extends React.Component {
 	}
 
 	componentDidMount() {
+		/*
 		const {repository} = this.props;
 
 		const owner = repository.owner.login;
@@ -35,10 +40,11 @@ export default class RepositoriesView extends React.Component {
 					pullRequests: this.pullRequestsDataSource.cloneWithRows(pulls)
 				})
 			);
+		*/
 	}
 
 	render() {
-		const {repository} = this.props;
+		const repository = this.props.state.itemsMap[this.props.repositoryId];
 
 		return (
 			<View style={styles.view}>
@@ -88,7 +94,7 @@ export default class RepositoriesView extends React.Component {
 		<Text style={styles.bodyPullsHeader}>No Pulls</Text>;
 
 	renderItems = () =>
-		<View>
+		<View style={styles.bodyPullRequestsContainer}>
 			<Text style={styles.bodyPullsHeader}>Pulls</Text>
 			<PullRequestsList dataSource={this.state.pullRequests}/>
 		</View>;
@@ -113,7 +119,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 
 		width: '100%',
-		height: 90,
+		height: 110,
 		paddingTop: 15,
 		paddingRight: 10,
 		paddingBottom: 10,
@@ -149,6 +155,9 @@ const styles = StyleSheet.create({
 		color: '#1452ff',
 		textDecorationLine: 'underline'
 	},
+	bodyPullRequestsContainer: {
+		marginBottom: 30
+	},
 	bodyPullsHeader: {
 		fontSize: 18,
 		fontWeight: 'bold'
@@ -157,7 +166,7 @@ const styles = StyleSheet.create({
 
 	avatar: {
 		position: 'absolute',
-		top: 10,
+		top: 30,
 		left: 10,
 		width: 100,
 		height: 100,

@@ -1,59 +1,32 @@
 import React from 'react';
-
-import { View, Text, ListView, StyleSheet } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
+import {connect} from 'react-redux';
 
 import RepositoriesList from './RepositoriesList';
 import RepositoriesSearch from './RepositoriesSearch';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Theme from '../theme/index';
+import * as repositoriesActions from '../actions/repositories';
+import * as navigationActions from '../actions/navigation';
 
-import GitHub from '../models/GitHub';
+import Theme from '../theme';
 
+@connect(state => ({state: state.repositories}), (dispatch) => ({dispatch}))
 export default class RepositoriesView extends React.Component {
 
-    constructor(props) {
-        super(props);
+	render() {
+		if (this.props.state.isFetching) {
+			return this.renderLoading();
+		} else {
+			const itemsCount = this.props.state.items
+				? this.props.state.items.getRowCount()
+				: 0;
 
-        this.repositoriesDataSource =  new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-
-        this.state = {
-            repositories: null,
-			searchQuery: null
-        };
-    }
-
-    componentDidMount() {
-		this.fetch();
-    }
-
-    onSearch = (query) => {
-    	if (this.state.searchQuery === query) {
-    		return;
-		}
-
-    	this.setState({searchQuery: query}, () => {
-			this.fetch(this.state.searchQuery);
-		});
-	};
-
-    fetch = (query) => {
-		GitHub.search
-			.repositories({ q: query || 'stars:>0', s: 'stars', o: 'desc' })
-			.then((repositories) =>
-				this.setState({repositories: this.repositoriesDataSource.cloneWithRows(repositories.items)})
-			);
-	};
-
-    render() {
-		const itemsCount = this.state.repositories ? this.state.repositories.getRowCount() : null;
-
-		return itemsCount > 0
-			? this.renderItems()
-			: itemsCount === null
-				? this.renderLoading()
+			return itemsCount > 0
+				? this.renderItems(this.props.state)
 				: this.renderNoItems();
-    }
+		}
+	}
 
 	renderLoading = () =>
 		<View style={styles.view}>
@@ -63,29 +36,37 @@ export default class RepositoriesView extends React.Component {
 	renderNoItems = () =>
 		<View style={styles.view}>
 			<Text style={styles.text}>No Repositories</Text>
-			<RepositoriesSearch value={this.state.searchQuery} onSearch={this.onSearch} />
+			<RepositoriesSearch value={state.filters.query} onSearch={this.onSearch}/>
 		</View>;
 
-	renderItems = () =>
+	renderItems = (state) =>
 		<View style={styles.view}>
-			<RepositoriesList dataSource={this.state.repositories} onRepositoryPress={this.onRepositoryPress} />
-			<RepositoriesSearch value={this.state.searchQuery} onSearch={this.onSearch} />
+			<RepositoriesList dataSource={state.items}
+							  onRepositoryPress={this.onRepositoryPress}/>
+			<RepositoriesSearch value={state.filters.query} onSearch={this.onSearch}/>
 		</View>;
 
+	onSearch = (query) => {
+		if (this.props.state.filters.query === query) {
+			return;
+		}
+
+		repositoriesActions.fetch(query)(this.props.dispatch);
+	};
 
 	onRepositoryPress = (repository) => {
-        this.props.navigator.push({path: '/repository', repository});
-    }
+		this.props.dispatch(navigationActions.navigate('/repositories/' + repository.id));
+	}
 }
 
 const styles = StyleSheet.create({
-    view: {
-        width: '100%',
-        height: '100%',
+	view: {
+		width: '100%',
+		height: '100%',
 		backgroundColor: Theme.globals.mainColor,
 		justifyContent: 'center',
 		alignItems: 'center'
-    },
+	},
 
 	text: {
 		color: '#fff'

@@ -3,10 +3,9 @@ import React from 'react';
 import {Image, ListView, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import Counter from './Counter';
 
-import Theme from '../theme/index';
+import Theme from '../theme';
 
 export default class RepositoriesList extends React.Component {
-
 	render() {
 		return (
 			<ListView
@@ -18,28 +17,34 @@ export default class RepositoriesList extends React.Component {
 	}
 
 	renderRow = (repository) => {
+		const {onRepositoryPress} = this.props;
+
 		return (
 			<TouchableOpacity style={styles.item}
-							  onPress={() => this.props.onRepositoryPress && this.props.onRepositoryPress(repository)}>
-				{renderAvatar()}
+							  onPress={() => onRepositoryPress && onRepositoryPress(repository)}>
+				{repository.owner.avatar_url &&
+				<Image style={styles.itemBackgroundImage} source={{uri: repository.owner.avatar_url}}/>}
+
 				<View style={styles.itemBody}>
 					<View style={styles.itemBodyTextContainer}>
 						<Text style={styles.itemBodyText}>{repository.name}</Text>
-						<Counter style={styles.itemBodyText} iconStyle={styles.itemBodyStarIcon} icon="star"
-								 count={repository.stargazers_count}/>
-						<Counter style={styles.itemBodyText} icon="eye" count={repository.watchers_count}/>
-						<Counter style={styles.itemBodyText} icon="exclamation-circle"
-								 count={repository.open_issues_count}/>
+
+						<Counter style={styles.itemBodyText}
+								 iconStyle={styles.itemBodyStarIcon}
+								 icon="star"
+								 count={repository.stargazers_count}
+						/>
+						<Counter style={styles.itemBodyText} icon="eye"
+								 count={repository.watchers_count}
+						/>
+						<Counter style={styles.itemBodyText}
+								 icon="exclamation-circle"
+								 count={repository.open_issues_count}
+						/>
 					</View>
 				</View>
 			</TouchableOpacity>
 		);
-
-
-		function renderAvatar() {
-			return repository.owner.avatar_url &&
-				<Image style={styles.itemBackgroundImage} source={{uri: repository.owner.avatar_url}}/>
-		}
 	};
 
 }
