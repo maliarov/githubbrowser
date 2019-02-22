@@ -37,14 +37,11 @@ export function fetchError(error) {
 }
 
 export function fetch(query) {
-  return async (dispatch) => {
+  return (dispatch) => {
     dispatch({ type: actionTypes.reposFetch, payload: query });
 
-    try {
-      const resp = await GitHub.search.repositories({ q: query || 'stars:>0', s: 'stars', o: 'desc' });
-      dispatch(fetchSuccess(resp.items));
-    } catch (err) {
-      dispatch(fetchError(err));
-    }
+    GitHub.search.repositories({ q: query || 'stars:>0', s: 'stars', o: 'desc' })
+      .then(({ items }) => dispatch(fetchSuccess(items)))
+      .catch(err => dispatch(fetchError(err)));
   };
 }

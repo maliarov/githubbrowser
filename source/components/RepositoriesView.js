@@ -8,8 +8,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import RepositoriesList from './RepositoriesList';
 import RepositoriesSearch from './RepositoriesSearch';
 
-import { fetch } from '../actions/repositories';
-import { fetch as prsFetch } from '../actions/pullRequests';
+import { fetch as fetchRepos } from '../actions/repositories';
+import { fetch as fetchPulls } from '../actions/pullRequests';
 import { navigate } from '../actions/navigation';
 
 import Theme from '../theme';
@@ -82,12 +82,12 @@ class RepositoriesView extends React.Component {
       return;
     }
 
-    fetch(query)(this.props.dispatch);
+    fetchRepos(query)(this.props.dispatch);
   };
 
   onRepositoryPress = (repository) => {
-    this.props.dispatch(navigate(`/repositories/${repository.id}`));
-    this.props.dispatch(prsFetch({ owner: repository.owner.id, repo: repository.id }));
+    navigate(`/repositories/${repository.id}`)(this.props.dispatch);
+    fetchPulls({ owner: repository.owner.login, repo: repository.name })(this.props.dispatch);
   }
 }
 

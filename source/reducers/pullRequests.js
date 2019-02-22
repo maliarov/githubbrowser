@@ -1,8 +1,8 @@
 import {
-  reposSet,
-  reposFetch,
-  reposFetchSuccess,
-  reposFetchError,
+  prsSet,
+  prsFetch,
+  prsFetchSuccess,
+  prsFetchError,
 } from '../actions/types';
 
 const initialState = {
@@ -12,14 +12,14 @@ const initialState = {
   itemsMap: null,
 };
 
-function prsSet(state, action) {
+function set(state, action) {
   return {
     ...state,
     ...action.payload.items,
   };
 }
 
-function prsFetch(state) {
+function fetch(state) {
   return {
     ...state,
     isFetching: true,
@@ -29,7 +29,7 @@ function prsFetch(state) {
   };
 }
 
-function prsFetchSuccess(state, action) {
+function fetchSuccess(state, action) {
   return {
     ...state,
     isFetching: false,
@@ -37,7 +37,7 @@ function prsFetchSuccess(state, action) {
   };
 }
 
-function prsFetchError(state, action) {
+function fetchError(state, action) {
   return {
     ...state,
     isFetching: false,
@@ -47,14 +47,14 @@ function prsFetchError(state, action) {
 
 export default function pullRequests(state = initialState, action) {
   switch (action.type) {
-    case reposSet:
-      return prsSet(state, action);
-    case reposFetch:
-      return prsFetch(state, action);
-    case reposFetchSuccess:
-      return prsFetchSuccess(state, action);
-    case reposFetchError:
-      return prsFetchError(state, action);
+    case prsSet:
+      return set(state, action);
+    case prsFetch:
+      return fetch(state, action);
+    case prsFetchSuccess:
+      return fetchSuccess(state, action);
+    case prsFetchError:
+      return fetchError(state, action);
     default:
       return state;
   }

@@ -1,4 +1,9 @@
-import * as actionTypes from '../actions/types';
+import {
+  reposSet,
+  reposFetch,
+  reposFetchSuccess,
+  reposFetchError,
+} from '../actions/types';
 
 const initialState = {
   filters: {
@@ -49,13 +54,13 @@ function fetchError(state, action) {
 
 export default function repositories(state = initialState, action) {
   switch (action.type) {
-    case actionTypes.reposSet:
+    case reposSet:
       return set(state, action);
-    case actionTypes.reposFetch:
+    case reposFetch:
       return fetch(state, action);
-    case actionTypes.reposFetchSuccess:
+    case reposFetchSuccess:
       return fetchSuccess(state, action);
-    case actionTypes.reposFetchError:
+    case reposFetchError:
       return fetchError(state, action);
     default:
       return state;

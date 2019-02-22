@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
 export default class RepositoriesList extends React.Component {
   static propTypes = {
     onRepositoryPress: PropTypes.func,
-    dataSource: PropTypes.object.isRequired,
+    dataSource: PropTypes.any,
   }
 
   render() {

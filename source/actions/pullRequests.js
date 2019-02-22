@@ -15,8 +15,8 @@ export function set(pullRequests) {
     payload: {
       items: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
         .cloneWithRows(pullRequests),
-      itemsMap: pullRequests.reduce((map, repository) => (
-        { ...map, [repository.id]: repository }
+      itemsMap: pullRequests.reduce((map, pullRequest) => (
+        { ...map, [pullRequest.id]: pullRequest }
       ), {}),
     },
   };
@@ -28,8 +28,8 @@ export function fetchSuccess(pullRequests) {
     payload: {
       items: new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
         .cloneWithRows(pullRequests),
-      itemsMap: pullRequests.reduce((map, repository) => (
-        { ...map, [repository.id]: repository }
+      itemsMap: pullRequests.reduce((map, pullRequest) => (
+        { ...map, [pullRequest.id]: pullRequest }
       ), {}),
     },
   };
@@ -42,15 +42,21 @@ export function fetchError(error) {
   };
 }
 
-export function fetch({ owner, repo }) {
-  return async (dispatch) => {
-    dispatch({ type: prsFetch, payload: { owner, repo } });
+export function fetch({
+  owner, repo, sort = 'created', direction = 'desc',
+}) {
+  return (dispatch) => {
+    dispatch({
+      type: prsFetch,
+      payload: {
+        owner, repo, sort, direction,
+      },
+    });
 
-    try {
-      const resp = await GitHub.search.pulls({ owner, repo });
-      dispatch(fetchSuccess(resp.items));
-    } catch (err) {
-      dispatch(fetchError(err));
-    }
+    GitHub.search.pulls({
+      owner, repo, sort, direction,
+    })
+      .then(items => dispatch(fetchSuccess(items)))
+      .catch(err => dispatch(fetchError(err)));
   };
 }

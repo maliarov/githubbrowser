@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
   },
 });
 
-@connect(state => ({ state: state.pullRequests }), dispatch => ({ dispatch }))
+@connect(state => ({ pullRequest: state.pullRequests }), dispatch => ({ dispatch }))
 class PullRequestsList extends React.Component {
   static propTypes = {
-    dataSource: PropTypes.object.isRequire,
+    dataSource: PropTypes.any,
   }
 
   render() {

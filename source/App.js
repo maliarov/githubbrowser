@@ -9,15 +9,15 @@ import reducers from './reducers';
 import RepositoriesView from './components/RepositoriesView';
 import RepositoryView from './components/RepositoryView';
 
-import { fetch } from './actions/repositories';
 import { navigate } from './actions/navigation';
+import { fetch as fetchRepos } from './actions/repositories';
 
 const reducer = combineReducers(reducers);
 const store = createStore(reducer);
 
-fetch()(store.dispatch);
+fetchRepos()(store.dispatch);
 
-export default class App extends React.Component {
+class App extends React.Component {
   // eslint-disable-next-line react/no-deprecated
   componentWillMount() {
     this.registerNavigation();
@@ -60,7 +60,7 @@ export default class App extends React.Component {
       if (this.navigator) {
         const routes = this.navigator.getCurrentRoutes();
         if (routes.length > 1) {
-          store.dispatch(navigate(routes[routes.length - 2].path));
+          navigate(routes[routes.length - 2].path)(store.dispatch);
           return true;
         }
       }
@@ -104,3 +104,5 @@ export default class App extends React.Component {
     };
   };
 }
+
+export default App;
